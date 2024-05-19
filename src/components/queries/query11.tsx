@@ -1,14 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { findMostPopularSignaling, findMostStolenBrandNames } from '../../services/queryService';
 
-interface MostPopularSignaling {
-    mostPopularSignaling: string;
-}
-
-interface MostStolenBrand {
-    mostStolenBrand: string;
-}
-
 const Query11: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [mostPopularSignaling, setMostPopularSignaling] = useState<string[]>([]);

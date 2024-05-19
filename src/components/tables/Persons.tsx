@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getPersons } from '../../services/tableService';
+import { getPersonById, addPerson, updatePerson, deletePerson } from '../../services/personsService';
 
 interface Person {
     id: number;
@@ -12,28 +13,64 @@ interface Person {
     apartment?: number;
 }
 
-const User: React.FC = () => {
+const Persons: React.FC = () => {
     const [persons, setPersons] = useState<Person[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [formType, setFormType] = useState<'create' | 'update' | 'delete' | null>(null);
+    const [formData, setFormData] = useState<any>({});
+    const [selectedId, setSelectedId] = useState<number | null>(null);
+
+    const fetchPersons = async () => {
+        try {
+            const data = await getPersons();
+            setPersons(data);
+        } catch (err: any) {
+            setError(`Failed to fetch persons: ${err.message}`);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchPersons = async () => {
-            try {
-                const data = await getPersons();
-                setPersons(data);
-            } catch (err: any) {
-                setError(`Failed to fetch persons: ${err.message}`);
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchPersons();
     }, []);
 
+    const handleSave = async () => {
+        try {
+            if (formType === 'create') {
+                await addPerson(formData);
+            } else if (formType === 'update' && selectedId !== null) {
+                await updatePerson(selectedId, formData);
+            } else if (formType === 'delete' && selectedId !== null) {
+                await deletePerson(selectedId);
+            }
+            setFormType(null);
+            setFormData({});
+            setSelectedId(null);
+            await fetchPersons();
+            setError(null);
+        } catch (err: any) {
+            setError(`Failed to ${formType}: ${err.message}`);
+        }
+    };
+
+    const fetchPersonForUpdate = async (id: number) => {
+        try {
+            const person = await getPersonById(id);
+            setFormData(person);
+        } catch (err: any) {
+            setError(`Failed to fetch person: ${err.message}`);
+        }
+    };
+
+    useEffect(() => {
+        if (formType === 'update' && selectedId !== null) {
+            fetchPersonForUpdate(selectedId);
+        }
+    }, [selectedId]);
+
     if (loading) return <div>Loading...</div>;
-    if (error) return <div>{error}</div>;
 
     return (
         <div className="table-container">
@@ -66,8 +103,146 @@ const User: React.FC = () => {
                 ))}
                 </tbody>
             </table>
+            <div className="actions">
+                <button onClick={() => setFormType('create')}>Создать запись</button>
+                <button onClick={() => setFormType('delete')}>Удалить запись</button>
+                <button onClick={() => setFormType('update')}>Изменить запись</button>
+            </div>
+            {formType && (
+                <div className="form-container">
+                    {formType === 'create' && (
+                        <div>
+                            <h3>Создать запись</h3>
+                            <input
+                                type="text"
+                                placeholder="Last Name"
+                                value={formData.lastname || ''}
+                                onChange={(e) => setFormData({ ...formData, lastname: e.target.value })}
+                            />
+                            <input
+                                type="text"
+                                placeholder="Name"
+                                value={formData.name || ''}
+                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                            />
+                            <input
+                                type="text"
+                                placeholder="Father Name"
+                                value={formData.fathername || ''}
+                                onChange={(e) => setFormData({ ...formData, fathername: e.target.value })}
+                            />
+                            <input
+                                type="text"
+                                placeholder="City"
+                                value={formData.city || ''}
+                                onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                            />
+                            <input
+                                type="text"
+                                placeholder="Street"
+                                value={formData.street || ''}
+                                onChange={(e) => setFormData({ ...formData, street: e.target.value })}
+                            />
+                            <input
+                                type="text"
+                                placeholder="House"
+                                value={formData.house || ''}
+                                onChange={(e) => setFormData({ ...formData, house: e.target.value })}
+                            />
+                            <input
+                                type="number"
+                                placeholder="Apartment"
+                                value={formData.apartment || ''}
+                                onChange={(e) => setFormData({ ...formData, apartment: e.target.value })}
+                            />
+                        </div>
+                    )}
+                    {formType === 'delete' && (
+                        <div>
+                            <h3>Удалить запись</h3>
+                            <div className="select-wrapper">
+                                <select
+                                    className="select-input"
+                                    value={selectedId || ''}
+                                    onChange={(e) => setSelectedId(Number(e.target.value))}
+                                >
+                                    <option value="">Выберите ID</option>
+                                    {persons.map(person => (
+                                        <option key={person.id} value={person.id}>{person.id}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+                    )}
+                    {formType === 'update' && (
+                        <div>
+                            <h3>Изменить запись</h3>
+                            <div className="select-wrapper">
+                                <select
+                                    className="select-input"
+                                    value={selectedId || ''}
+                                    onChange={(e) => setSelectedId(Number(e.target.value))}
+                                >
+                                    <option value="">Выберите ID</option>
+                                    {persons.map(person => (
+                                        <option key={person.id} value={person.id}>{person.id}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            {selectedId && (
+                                <div>
+                                    <input
+                                        type="text"
+                                        placeholder="Last Name"
+                                        value={formData.lastname || ''}
+                                        onChange={(e) => setFormData({ ...formData, lastname: e.target.value })}
+                                    />
+                                    <input
+                                        type="text"
+                                        placeholder="Name"
+                                        value={formData.name || ''}
+                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                    />
+                                    <input
+                                        type="text"
+                                        placeholder="Father Name"
+                                        value={formData.fathername || ''}
+                                        onChange={(e) => setFormData({ ...formData, fathername: e.target.value })}
+                                    />
+                                    <input
+                                        type="text"
+                                        placeholder="City"
+                                        value={formData.city || ''}
+                                        onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                                    />
+                                    <input
+                                        type="text"
+                                        placeholder="Street"
+                                        value={formData.street || ''}
+                                        onChange={(e) => setFormData({ ...formData, street: e.target.value })}
+                                    />
+                                    <input
+                                        type="text"
+                                        placeholder="House"
+                                        value={formData.house || ''}
+                                        onChange={(e) => setFormData({ ...formData, house: e.target.value })}
+                                    />
+                                    <input
+                                        type="number"
+                                        placeholder="Apartment"
+                                        value={formData.apartment || ''}
+                                        onChange={(e) => setFormData({ ...formData, apartment: e.target.value })}
+                                    />
+                                </div>
+                            )}
+                        </div>
+                    )}
+                    {error && <div className="error-message">{error}</div>}
+                    <button onClick={handleSave}>Сохранить</button>
+                </div>
+            )}
         </div>
     );
 };
 
-export default User;
+export default Persons;
