@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getColors } from '../../services/colorsService';
+import { getColors } from '../../services/tableService';
 
 interface Color {
     id: number;
@@ -30,8 +30,9 @@ const Colors: React.FC = () => {
     if (error) return <div>{error}</div>;
 
     return (
-        <div className="colors-container">
-            <table className="colors-table">
+        <div className="table-container">
+            <h2>Colors</h2>
+            <table className="data-table">
                 <thead>
                 <tr>
                     <th>ID</th>

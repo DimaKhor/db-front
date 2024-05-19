@@ -1,5 +1,16 @@
 import React from 'react';
 import Colors from '../components/tables/Colors'
+import TransportTypes from '../components/tables/TransportTypes'
+import Brands from '../components/tables/Brands'
+import Persons from '../components/tables/Persons'
+import Organizations from '../components/tables/Organizations'
+import TransportNumberDirectory from '../components/tables/TransportNumberDirectory'
+import AccidentTypes from '../components/tables/AccidentTypes'
+import RoadAccidents from '../components/tables/RoadAccidents'
+import TransportsDamagedInAccident from '../components/tables/TransportsDamagedInAccident'
+import HijackingsResult from '../components/tables/HijackingsResult'
+import Hijackings from '../components/tables/Hijackings'
+import Inspection from '../components/tables/Inspection'
 
 interface MainProps {
     activeBlock: string;
@@ -10,17 +21,17 @@ const Main: React.FC<MainProps> = ({ activeBlock }) => {
         <main className="main">
             {activeBlock === 'block1' && <div>Content for Block 1</div>}
             {activeBlock === 'Colors' && <div><Colors /></div>}
-            {activeBlock === 'TransportTypes' && <div>Content for Transport Types</div>}
-            {activeBlock === 'Brands' && <div>Content for Brands</div>}
-            {activeBlock === 'Persons' && <div>Content for Persons</div>}
-            {activeBlock === 'Organizations' && <div>Content for Organizations</div>}
-            {activeBlock === 'TransportNumberDirectory' && <div>Content for Transport Number Directory</div>}
-            {activeBlock === 'AccidentTypes' && <div>Content for Accident Types</div>}
-            {activeBlock === 'RoadAccidents' && <div>Content for Road Accidents</div>}
-            {activeBlock === 'TransportsDamagedInAccident' && <div>Content for Transports Damaged In Accident</div>}
-            {activeBlock === 'HijackingsResult' && <div>Content for Hijackings Result</div>}
-            {activeBlock === 'Hijackings' && <div>Content for Hijackings</div>}
-            {activeBlock === 'Inspection' && <div>Content for Inspection</div>}
+            {activeBlock === 'TransportTypes' && <div><TransportTypes /></div>}
+            {activeBlock === 'Brands' && <div><Brands /></div>}
+            {activeBlock === 'Persons' && <div><Persons/></div>}
+            {activeBlock === 'Organizations' && <div><Organizations /></div>}
+            {activeBlock === 'TransportNumberDirectory' && <div><TransportNumberDirectory /></div>}
+            {activeBlock === 'AccidentTypes' && <div><AccidentTypes /></div>}
+            {activeBlock === 'RoadAccidents' && <div><RoadAccidents /></div>}
+            {activeBlock === 'TransportsDamagedInAccident' && <div><TransportsDamagedInAccident /></div>}
+            {activeBlock === 'HijackingsResult' && <div><HijackingsResult /></div>}
+            {activeBlock === 'Hijackings' && <div><Hijackings /></div>}
+            {activeBlock === 'Inspection' && <div><Inspection /></div>}
             {activeBlock === 'Запрос 1' && <div>Content for Sub Block 1</div>}
             {activeBlock === 'Запрос 2' && <div>Content for Sub Block 2</div>}
             {activeBlock === 'Запрос 3' && <div>Content for Запрос 3</div>}
