@@ -11,6 +11,17 @@ import TransportsDamagedInAccident from '../components/tables/TransportsDamagedI
 import HijackingsResult from '../components/tables/HijackingsResult'
 import Hijackings from '../components/tables/Hijackings'
 import Inspection from '../components/tables/Inspection'
+import Query1 from "./queries/query1";
+import Query2 from "./queries/query2";
+import Query3 from "./queries/query3";
+import Query4 from "./queries/query4";
+import Query5 from "./queries/query5";
+import Query6 from "./queries/query6";
+import Query7 from "./queries/query7";
+import Query8 from "./queries/query8";
+import Query9 from "./queries/query9";
+import Query10 from "./queries/query10";
+import Query11 from "./queries/query11";
 
 interface MainProps {
     activeBlock: string;
@@ -32,17 +43,17 @@ const Main: React.FC<MainProps> = ({ activeBlock }) => {
             {activeBlock === 'HijackingsResult' && <div><HijackingsResult /></div>}
             {activeBlock === 'Hijackings' && <div><Hijackings /></div>}
             {activeBlock === 'Inspection' && <div><Inspection /></div>}
-            {activeBlock === 'Запрос 1' && <div>Content for Sub Block 1</div>}
-            {activeBlock === 'Запрос 2' && <div>Content for Sub Block 2</div>}
-            {activeBlock === 'Запрос 3' && <div>Content for Запрос 3</div>}
-            {activeBlock === 'Запрос 4' && <div>Content for Запрос 4</div>}
-            {activeBlock === 'Запрос 5' && <div>Content for Запрос 5</div>}
-            {activeBlock === 'Запрос 6' && <div>Content for Запрос 6</div>}
-            {activeBlock === 'Запрос 7' && <div>Content for Запрос 7</div>}
-            {activeBlock === 'Запрос 8' && <div>Content for Запрос 8</div>}
-            {activeBlock === 'Запрос 9' && <div>Content for Запрос 9</div>}
-            {activeBlock === 'Запрос 10' && <div>Content for Запрос 10</div>}
-            {activeBlock === 'Запрос 11' && <div>Content for Запрос 11</div>}
+            {activeBlock === 'Запрос 1' && <div><Query1 /></div>}
+            {activeBlock === 'Запрос 2' && <div><Query2 /></div>}
+            {activeBlock === 'Запрос 3' && <div><Query3 /></div>}
+            {activeBlock === 'Запрос 4' && <div><Query4 /></div>}
+            {activeBlock === 'Запрос 5' && <div><Query5 /></div>}
+            {activeBlock === 'Запрос 6' && <div><Query6 /></div>}
+            {activeBlock === 'Запрос 7' && <div><Query7 /></div>}
+            {activeBlock === 'Запрос 8' && <div><Query8 /></div>}
+            {activeBlock === 'Запрос 9' && <div><Query9 /></div>}
+            {activeBlock === 'Запрос 10' && <div><Query10 /></div>}
+            {activeBlock === 'Запрос 11' && <div><Query11 /></div>}
         </main>
     );
 }

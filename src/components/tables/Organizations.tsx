@@ -37,7 +37,7 @@ const Organizations: React.FC = () => {
 
     return (
         <div className="table-container">
-            <h2>Organizations Table</h2>
+            <h2>Organizations</h2>
             <table className="data-table">
                 <thead>
                 <tr>

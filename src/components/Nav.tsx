@@ -95,37 +95,37 @@ const Nav: React.FC<NavProps> = ({ setActiveBlock }) => {
                 </button>
                 <div className={`sub-menu ${showSubMenu2 ? 'show' : ''}`}>
                     <button className={`nav-button ${activeSubButton === 'Запрос 1' ? 'active' : ''}`}
-                            onClick={() => handleSubClick('Запрос 1')}>Запрос 1
+                            onClick={() => handleSubClick('Запрос 1')}>Запрос 1 (Поиск организаций)
                     </button>
                     <button className={`nav-button ${activeSubButton === 'Запрос 2' ? 'active' : ''}`}
-                            onClick={() => handleSubClick('Запрос 2')}>Запрос 2
+                            onClick={() => handleSubClick('Запрос 2')}>Запрос 2 (Сведения о владельце по госномеру)
                     </button>
                     <button className={`nav-button ${activeSubButton === 'Запрос 3' ? 'active' : ''}`}
-                            onClick={() => handleSubClick('Запрос 3')}>Запрос 3
+                            onClick={() => handleSubClick('Запрос 3')}>Запрос 3 (Досье на автомобиль по госномеру)
                     </button>
                     <button className={`nav-button ${activeSubButton === 'Запрос 4' ? 'active' : ''}`}
-                            onClick={() => handleSubClick('Запрос 4')}>Запрос 4
+                            onClick={() => handleSubClick('Запрос 4')}>Запрос 4 (Машины, не прошедшие вовремя техосмотр)
                     </button>
                     <button className={`nav-button ${activeSubButton === 'Запрос 5' ? 'active' : ''}`}
-                            onClick={() => handleSubClick('Запрос 5')}>Запрос 5
+                            onClick={() => handleSubClick('Запрос 5')}>Запрос 5 (Статистика по типу ДТП за указанный период)
                     </button>
                     <button className={`nav-button ${activeSubButton === 'Запрос 6' ? 'active' : ''}`}
-                            onClick={() => handleSubClick('Запрос 6')}>Запрос 6
+                            onClick={() => handleSubClick('Запрос 6')}>Запрос 6 (Результаты анализа ДТП)
                     </button>
                     <button className={`nav-button ${activeSubButton === 'Запрос 7' ? 'active' : ''}`}
-                            onClick={() => handleSubClick('Запрос 7')}>Запрос 7
+                            onClick={() => handleSubClick('Запрос 7')}>Запрос 7 (ДТП, совершенные водителями в нетрезвом виде)
                     </button>
                     <button className={`nav-button ${activeSubButton === 'Запрос 8' ? 'active' : ''}`}
-                            onClick={() => handleSubClick('Запрос 8')}>Запрос 8
+                            onClick={() => handleSubClick('Запрос 8')}>Запрос 8 (Машины, отданные в розыск)
                     </button>
                     <button className={`nav-button ${activeSubButton === 'Запрос 9' ? 'active' : ''}`}
-                            onClick={() => handleSubClick('Запрос 9')}>Запрос 9
+                            onClick={() => handleSubClick('Запрос 9')}>Запрос 9 (Эффективность розыскной работы)
                     </button>
                     <button className={`nav-button ${activeSubButton === 'Запрос 10' ? 'active' : ''}`}
-                            onClick={() => handleSubClick('Запрос 10')}>Запрос 10
+                            onClick={() => handleSubClick('Запрос 10')}>Запрос 10 (Перечень угонов)
                     </button>
                     <button className={`nav-button ${activeSubButton === 'Запрос 11' ? 'active' : ''} ${!mainButtonBottomClass ? 'main-button-bottom' : ''}`}
-                            onClick={() => handleSubClick('Запрос 11')}>Запрос 11
+                            onClick={() => handleSubClick('Запрос 11')}>Запрос 11 (Статистика по угонам)
                     </button>
                 </div>
             </div>

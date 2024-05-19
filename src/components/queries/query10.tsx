@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
-import { getOrganizationsBySeriesOrPeriod, getOrganizationsCountBySeriesOrPeriod } from '../../services/queryService';
+import { getHijackingsByPeriod, getHijackingsCountByPeriod } from '../../services/queryService';
 
-const Query1: React.FC = () => {
-    const [series, setSeries] = useState<string>('');
+interface Hijacking {
+    car_number: string;
+}
+
+const Query10: React.FC = () => {
     const [startDate, setStartDate] = useState<string>('');
     const [endDate, setEndDate] = useState<string>('');
     const [error, setError] = useState<string | null>(null);
-    const [result, setResult] = useState<string[]>([]);
+    const [result, setResult] = useState<Hijacking[]>([]);
     const [count, setCount] = useState<number | null>(null);
-    const [searched, setSearched] = useState<boolean>(false);
+    const [submitted, setSubmitted] = useState<boolean>(false);
 
     const isValidDate = (date: string) => {
         const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
@@ -20,29 +23,29 @@ const Query1: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setSubmitted(true);
 
-        if ((startDate && !isValidDate(startDate)) || (endDate && !isValidDate(endDate))) {
+        if (!startDate || !endDate) {
+            setError('Все поля должны быть заполнены');
+            setResult([]);
+            setCount(null);
+            return;
+        }
+
+        if (!isValidDate(startDate) || !isValidDate(endDate)) {
             setError('Дата должна быть в формате yyyy-MM-dd и быть корректной');
             setResult([]);
             setCount(null);
             return;
         }
 
-        if ((!startDate && endDate) || (startDate && !endDate)) {
-            setError('Необходимо заполнить обе даты или ни одну');
-            setResult([]);
-            setCount(null);
-            return;
-        }
-
         setError(null);
-        setSearched(true);
 
         try {
-            const data = await getOrganizationsBySeriesOrPeriod(series, startDate, endDate);
-            setResult(data);
+            const data = await getHijackingsByPeriod(startDate, endDate);
+            setResult(data.map((number) => ({ car_number: number })));
 
-            const countData = await getOrganizationsCountBySeriesOrPeriod(series, startDate, endDate);
+            const countData = await getHijackingsCountByPeriod(startDate, endDate);
             setCount(countData);
         } catch (err: any) {
             setError(`Ошибка при получении данных: ${err.message}`);
@@ -53,14 +56,8 @@ const Query1: React.FC = () => {
 
     return (
         <div className="form-container">
-            <h2>Перечень организаций, которым выделены номера либо с указанной серией, либо за указанный период</h2>
+            <h2>Перечень и общее число угонов за указанный период</h2>
             <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label>
-                        Серия:
-                        <input type="text" value={series} onChange={(e) => setSeries(e.target.value)} />
-                    </label>
-                </div>
                 <div className="form-group">
                     <label>
                         Начальная дата (yyyy-MM-dd):
@@ -77,29 +74,30 @@ const Query1: React.FC = () => {
             </form>
             {error && <div className="error-message">{error}</div>}
             <div className="results">
-                {searched && !result.length && !error && <div>Нет данных для отображения</div>}
-                {result.length > 0 && (
+                {result.length > 0 ? (
                     <>
                         <table className="result-table">
                             <thead>
                             <tr>
-                                <th>Название организации</th>
+                                <th>Номер автомобиля</th>
                             </tr>
                             </thead>
                             <tbody>
-                            {result.map((orgName, index) => (
+                            {result.map((item, index) => (
                                 <tr key={index}>
-                                    <td>{orgName}</td>
+                                    <td>{item.car_number}</td>
                                 </tr>
                             ))}
                             </tbody>
                         </table>
-                        <div className="count">Число организаций: {count}</div>
+                        <div className="count">
+                            Общее число угонов: {count}
+                        </div>
                     </>
-                )}
+                ) : submitted && !error && <div>Нет данных для отображения</div>}
             </div>
         </div>
     );
 };
 
-export default Query1;
+export default Query10;
