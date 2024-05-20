@@ -8,9 +8,9 @@ export const addColor = async (name: string) => {
         return response.data;
     }  catch (error: any) {
         if (error.response) {
-            throw new Error(`Failed to add color: ${error.response.data}`);
+            throw new Error(` ${error.response.data}`);
         } else {
-            throw new Error(`Failed to add color: ${error.message}`);
+            throw new Error(`${error.message}`);
         }
     }
 };
@@ -20,9 +20,9 @@ export const deleteColor = async (id: number) => {
         await axios.delete(`${API_URL}/colors/${id}`);
     } catch (error: any) {
         if (error.response) {
-            throw new Error(`Failed to delete color: ${error.response.data}`);
+            throw new Error(`${error.response.data}`);
         } else {
-            throw new Error(`Failed to delete color: ${error.message}`);
+            throw new Error(`${error.message}`);
         }
     }
 };

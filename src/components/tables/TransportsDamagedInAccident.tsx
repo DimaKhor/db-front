@@ -20,6 +20,7 @@ const TransportsDamagedInAccident: React.FC = () => {
     const [transportNumbers, setTransportNumbers] = useState<any[]>([]);
 
     const fetchData = async () => {
+        setLoading(true);
         try {
             const [transportsData, accidentsData, transportNumbersData] = await Promise.all([
                 getTransportsDamagedInAccident(),
@@ -41,8 +42,18 @@ const TransportsDamagedInAccident: React.FC = () => {
     }, []);
 
     const handleSave = async () => {
+        setError(null);
         try {
             if (formType === 'create') {
+                if (formData.didRunAway === false) {
+                    if (!formData.accidentId || !formData.transportId || formData.didRunAway === undefined) {
+                        throw new Error('Заполните все поля');
+                    }
+                } else {
+                    if (!formData.accidentId || !formData.transportId || formData.didRunAway === undefined || formData.found === undefined) {
+                        throw new Error('Заполните все поля');
+                    }
+                }
                 await addTransportDamaged(formData);
             } else if (formType === 'update' && selectedId !== null) {
                 await updateTransportDamaged(selectedId.accidentId, selectedId.transportId, formData);
@@ -53,13 +64,13 @@ const TransportsDamagedInAccident: React.FC = () => {
             setFormData({});
             setSelectedId(null);
             await fetchData();
-            setError(null);
         } catch (err: any) {
-            setError(`Failed to ${formType}: ${err.message}`);
+            setError(`Error: ${err.message}`);
         }
     };
 
     const fetchTransportDamagedForUpdate = async (accidentId: number, transportId: number) => {
+        setError(null);
         try {
             const transportDamaged = await getTransportDamagedById(accidentId, transportId);
             setFormData(transportDamaged);
@@ -73,6 +84,12 @@ const TransportsDamagedInAccident: React.FC = () => {
             fetchTransportDamagedForUpdate(selectedId.accidentId, selectedId.transportId);
         }
     }, [selectedId]);
+
+    useEffect(() => {
+        if (formData.didRunAway === false) {
+            setFormData((prevState:any) => ({ ...prevState, found: null }));
+        }
+    }, [formData.didRunAway]);
 
     if (loading) return <div>Loading...</div>;
 
@@ -195,26 +212,6 @@ const TransportsDamagedInAccident: React.FC = () => {
                             </div>
                             {selectedId && (
                                 <div>
-                                    <select
-                                        className="styled-select"
-                                        value={formData.accidentId || ''}
-                                        onChange={(e) => setFormData({ ...formData, accidentId: parseInt(e.target.value) })}
-                                    >
-                                        <option value="">Выберите аварию</option>
-                                        {accidents.map(accident => (
-                                            <option key={accident.id} value={accident.id}>{accident.id}</option>
-                                        ))}
-                                    </select>
-                                    <select
-                                        className="styled-select"
-                                        value={formData.transportId || ''}
-                                        onChange={(e) => setFormData({ ...formData, transportId: parseInt(e.target.value) })}
-                                    >
-                                        <option value="">Выберите транспорт</option>
-                                        {transportNumbers.map(number => (
-                                            <option key={number.id} value={number.id}>{number.number}</option>
-                                        ))}
-                                    </select>
                                     <select
                                         className="styled-select"
                                         value={formData.didRunAway !== undefined ? formData.didRunAway.toString() : ''}

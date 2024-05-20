@@ -61,7 +61,7 @@ const Organizations: React.FC = () => {
             await fetchOrganizations();
             setError(null);
         } catch (err: any) {
-            setError(`Failed to ${formType}: ${err.message}`);
+            setError(`${err.message}`);
         }
     };
 

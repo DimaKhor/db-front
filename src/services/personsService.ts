@@ -21,9 +21,9 @@ export const addPerson = async (person: any) => {
         return response.data;
     } catch (error: any) {
         if (error.response) {
-            throw new Error(`Failed to add person: ${error.response.data}`);
+            throw new Error(`${error.response.data}`);
         } else {
-            throw new Error(`Failed to add person: ${error.message}`);
+            throw new Error(`${error.message}`);
         }
     }
 };
@@ -34,9 +34,9 @@ export const updatePerson = async (id: number, person: any) => {
         return response.data;
     } catch (error: any) {
         if (error.response) {
-            throw new Error(`Failed to update person: ${error.response.data}`);
+            throw new Error(`${error.response.data}`);
         } else {
-            throw new Error(`Failed to update person: ${error.message}`);
+            throw new Error(`${error.message}`);
         }
     }
 };
@@ -46,9 +46,9 @@ export const deletePerson = async (id: number) => {
         await axios.delete(`${API_URL}/persons/${id}`);
     } catch (error: any) {
         if (error.response) {
-            throw new Error(`Failed to delete person: ${error.response.data}`);
+            throw new Error(`${error.response.data}`);
         } else {
-            throw new Error(`Failed to delete person: ${error.message}`);
+            throw new Error(`${error.message}`);
         }
     }
 };

@@ -8,9 +8,9 @@ export const addTransportType = async (name: string) => {
         return response.data;
     } catch (error: any) {
         if (error.response) {
-            throw new Error(`Failed to create transport type: ${error.response.data}`);
+            throw new Error(`${error.response.data}`);
         } else {
-            throw new Error(`Failed to create transport type: ${error.message}`);
+            throw new Error(`${error.message}`);
         }
     }
 };
@@ -20,9 +20,9 @@ export const deleteTransportType = async (id: number) => {
         await axios.delete(`${API_URL}/transporttypes/${id}`);
     } catch (error: any) {
         if (error.response) {
-            throw new Error(`Failed to delete transport type: ${error.response.data}`);
+            throw new Error(`${error.response.data}`);
         } else {
-            throw new Error(`Failed to delete transport type: ${error.message}`);
+            throw new Error(`${error.message}`);
         }
     }
 };
@@ -33,9 +33,9 @@ export const updateTransportType = async (id: number, name: string) => {
         return response.data;
     } catch (error: any) {
         if (error.response) {
-            throw new Error(`Failed to update transport type: ${error.response.data}`);
+            throw new Error(`${error.response.data}`);
         } else {
-            throw new Error(`Failed to update transport type: ${error.message}`);
+            throw new Error(`${error.message}`);
         }
     }
 };

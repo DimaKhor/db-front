@@ -8,9 +8,9 @@ export const addAccidentType = async (name: string): Promise<any> => {
         return response.data;
     } catch (error: any) {
         if (error.response) {
-            throw new Error(`Failed to add accident type: ${error.response.data}`);
+            throw new Error(`${error.response.data}`);
         } else {
-            throw new Error(`Failed to add accident type: ${error.message}`);
+            throw new Error(`${error.message}`);
         }
     }
 };
@@ -21,9 +21,9 @@ export const updateAccidentType = async (id: number, name: string): Promise<any>
         return response.data;
     } catch (error: any) {
         if (error.response) {
-            throw new Error(`Failed to update accident type: ${error.response.data}`);
+            throw new Error(`${error.response.data}`);
         } else {
-            throw new Error(`Failed to update accident type: ${error.message}`);
+            throw new Error(`${error.message}`);
         }
     }
 };
@@ -33,9 +33,9 @@ export const deleteAccidentType = async (id: number): Promise<void> => {
         await axios.delete(`${API_URL}/accidenttypes/${id}`);
     } catch (error: any) {
         if (error.response) {
-            throw new Error(`Failed to delete accident type: ${error.response.data}`);
+            throw new Error(`${error.response.data}`);
         } else {
-            throw new Error(`Failed to delete accident type: ${error.message}`);
+            throw new Error(`${error.message}`);
         }
     }
 };

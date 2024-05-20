@@ -8,9 +8,9 @@ export const addHijackingsResult = async (resultName: string): Promise<any> => {
         return response.data;
     } catch (error: any) {
         if (error.response) {
-            throw new Error(`Failed to add hijacking result: ${error.response.data}`);
+            throw new Error(`${error.response.data}`);
         } else {
-            throw new Error(`Failed to add hijacking result: ${error.message}`);
+            throw new Error(`${error.message}`);
         }
     }
 };
@@ -21,9 +21,9 @@ export const updateHijackingsResult = async (id: number, resultName: string): Pr
         return response.data;
     }  catch (error: any) {
         if (error.response) {
-            throw new Error(`Failed to update hijacking result: ${error.response.data}`);
+            throw new Error(`${error.response.data}`);
         } else {
-            throw new Error(`Failed to update hijacking result: ${error.message}`);
+            throw new Error(`${error.message}`);
         }
     }
 };
@@ -33,9 +33,9 @@ export const deleteHijackingsResult = async (id: number): Promise<void> => {
         await axios.delete(`${API_URL}/hijackings-result/${id}`);
     }  catch (error: any) {
         if (error.response) {
-            throw new Error(`Failed to delete hijacking result: ${error.response.data}`);
+            throw new Error(`${error.response.data}`);
         } else {
-            throw new Error(`Failed to delete hijacking result: ${error.message}`);
+            throw new Error(`${error.message}`);
         }
     }
 };

@@ -50,7 +50,7 @@ const TransportTypes: React.FC = () => {
             const data = await getTransportTypes();
             setTransportTypes(data);
         } catch (err: any) {
-            setError(`Failed to ${action}: ${err.message}`);
+            setError(`${err.message}`);
         }
     };
 

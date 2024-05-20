@@ -50,7 +50,7 @@ const Colors: React.FC = () => {
             const data = await getColors();
             setColors(data);
         } catch (err: any) {
-            setError(`Failed to ${action}: ${err.message}`);
+            setError(`${err.message}`);
         }
     };
 

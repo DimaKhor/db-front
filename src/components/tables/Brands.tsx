@@ -50,7 +50,7 @@ const Brands: React.FC = () => {
             const data = await getBrands();
             setBrands(data);
         } catch (err: any) {
-            setError(`Failed to ${action}: ${err.message}`);
+            setError(`${err.message}`);
         }
     };
 

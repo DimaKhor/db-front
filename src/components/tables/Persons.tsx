@@ -61,7 +61,7 @@ const Persons: React.FC = () => {
             await fetchPersons();
             setError(null);
         } catch (err: any) {
-            setError(`Failed to ${formType}: ${err.message}`);
+            setError(`${err.message}`);
         }
     };
 

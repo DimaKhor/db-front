@@ -32,7 +32,7 @@ const AccidentTypes: React.FC = () => {
 
     const handleSave = async () => {
         try {
-            setError(null); // Reset error before attempting the operation
+            setError(null);
             if (action === 'create' && inputValue) {
                 await addAccidentType(inputValue);
             } else if (action === 'delete' && inputId) {
@@ -50,7 +50,7 @@ const AccidentTypes: React.FC = () => {
             const data = await getAccidentTypes();
             setAccidentTypes(data);
         } catch (err: any) {
-            setError(`Failed to ${action}: ${err.message}`);
+            setError(`${err.message}`);
         }
     };
 

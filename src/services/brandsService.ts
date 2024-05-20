@@ -8,9 +8,9 @@ export const addBrand = async (name: string) => {
         return response.data;
     } catch (error: any) {
         if (error.response) {
-            throw new Error(`Failed to add brand: ${error.response.data}`);
+            throw new Error(`${error.response.data}`);
         } else {
-            throw new Error(`Failed to add brand: ${error.message}`);
+            throw new Error(`${error.message}`);
         }
     }
 };
@@ -21,9 +21,9 @@ export const updateBrand = async (id: number, name: string) => {
         return response.data;
     } catch (error: any) {
         if (error.response) {
-            throw new Error(`Failed to update brand: ${error.response.data}`);
+            throw new Error(`${error.response.data}`);
         } else {
-            throw new Error(`Failed to update brand: ${error.message}`);
+            throw new Error(`${error.message}`);
         }
     }
 };
@@ -33,9 +33,9 @@ export const deleteBrand = async (id: number) => {
         await axios.delete(`${API_URL}/brands/${id}`);
     } catch (error: any) {
         if (error.response) {
-            throw new Error(`Failed to delete brand: ${error.response.data}`);
+            throw new Error(`${error.response.data}`);
         } else {
-            throw new Error(`Failed to delete brand: ${error.message}`);
+            throw new Error(`${error.message}`);
         }
     }
 };
