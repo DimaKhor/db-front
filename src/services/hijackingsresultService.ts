@@ -6,11 +6,11 @@ export const addHijackingsResult = async (resultName: string): Promise<any> => {
     try {
         const response = await axios.post(`${API_URL}/hijackings-result`, { resultName });
         return response.data;
-    } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-            throw new Error(error.response.data);
+    } catch (error: any) {
+        if (error.response) {
+            throw new Error(`Failed to add hijacking result: ${error.response.data}`);
         } else {
-            throw new Error('An unexpected error occurred while adding the color.');
+            throw new Error(`Failed to add hijacking result: ${error.message}`);
         }
     }
 };
@@ -19,11 +19,11 @@ export const updateHijackingsResult = async (id: number, resultName: string): Pr
     try {
         const response = await axios.put(`${API_URL}/hijackings-result/${id}`, { resultName });
         return response.data;
-    } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-            throw new Error(error.response.data);
+    }  catch (error: any) {
+        if (error.response) {
+            throw new Error(`Failed to update hijacking result: ${error.response.data}`);
         } else {
-            throw new Error('An unexpected error occurred while adding the color.');
+            throw new Error(`Failed to update hijacking result: ${error.message}`);
         }
     }
 };
@@ -31,11 +31,11 @@ export const updateHijackingsResult = async (id: number, resultName: string): Pr
 export const deleteHijackingsResult = async (id: number): Promise<void> => {
     try {
         await axios.delete(`${API_URL}/hijackings-result/${id}`);
-    } catch (error: any) {
+    }  catch (error: any) {
         if (error.response) {
-            throw new Error(`Failed to delete result: ${error.response.data}`);
+            throw new Error(`Failed to delete hijacking result: ${error.response.data}`);
         } else {
-            throw new Error(`Failed to delete result: ${error.message}`);
+            throw new Error(`Failed to delete hijacking result: ${error.message}`);
         }
     }
 };

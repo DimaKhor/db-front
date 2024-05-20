@@ -34,7 +34,10 @@ export const deleteTransportNumber = async (id: number) => {
     try {
         await axios.delete(`/transport-number/${id}`);
     } catch (error: any) {
-        console.error('Failed to delete transport number', error);
-        throw new Error(`Failed to delete transport number: ${error.response?.data?.message || error.message}`);
+        if (error.response) {
+            throw new Error(`Failed to delete transport number: ${error.response.data}`);
+        } else {
+            throw new Error(`Failed to delete transport number: ${error.message}`);
+        }
     }
 };

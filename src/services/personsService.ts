@@ -6,9 +6,12 @@ export const getPersonById = async (id: number) => {
     try {
         const response = await axios.get(`${API_URL}/persons/${id}`);
         return response.data;
-    } catch (error:any) {
-        console.error(error);
-        throw new Error('Failed to fetch person by ID: ' + error.message);
+    } catch (error: any) {
+        if (error.response) {
+            throw new Error(`Failed to get person: ${error.response.data}`);
+        } else {
+            throw new Error(`Failed to get person: ${error.message}`);
+        }
     }
 };
 

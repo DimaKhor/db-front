@@ -6,11 +6,11 @@ export const getHijackingById = async (id: number): Promise<any> => {
     try {
         const response = await axios.get(`${API_URL}/hijackings/${id}`);
         return response.data;
-    } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-            throw new Error(error.response.data);
+    } catch (error: any) {
+        if (error.response) {
+            throw new Error(`Failed to get hijacking: ${error.response.data}`);
         } else {
-            throw new Error('An unexpected error occurred while adding the color.');
+            throw new Error(`Failed to get hijacking: ${error.message}`);
         }
     }
 };
@@ -19,11 +19,11 @@ export const addHijacking = async (dto: any): Promise<any> => {
     try {
         const response = await axios.post(`${API_URL}/hijackings`, dto);
         return response.data;
-    } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-            throw new Error(error.response.data);
+    } catch (error: any) {
+        if (error.response) {
+            throw new Error(`Failed to add hijacking: ${error.response.data}`);
         } else {
-            throw new Error('An unexpected error occurred while adding the color.');
+            throw new Error(`Failed to add hijacking: ${error.message}`);
         }
     }
 };
@@ -34,15 +34,9 @@ export const updateHijacking = async (id: number, dto: any): Promise<any> => {
         return response.data;
     } catch (error: any) {
         if (error.response) {
-            console.error('Request failed with status code:', error.response.status);
-            console.error('Response data:', error.response.data);
-            throw new Error(`Request failed with status code: ${error.response.status}`);
-        } else if (error.request) {
-            console.error('No response received:', error.request);
-            throw new Error('No response received from server');
+            throw new Error(`Failed to update hijacking: ${error.response.data}`);
         } else {
-            console.error('Error setting up the request:', error.message);
-            throw new Error(`Error setting up the request: ${error.message}`);
+            throw new Error(`Failed to update hijacking: ${error.message}`);
         }
     }
 };
@@ -52,15 +46,9 @@ export const deleteHijacking = async (id: number): Promise<void> => {
         await axios.delete(`${API_URL}/hijackings/${id}`);
     } catch (error: any) {
         if (error.response) {
-            console.error('Request failed with status code:', error.response.status);
-            console.error('Response data:', error.response.data);
-            throw new Error(`Request failed with status code: ${error.response.status}`);
-        } else if (error.request) {
-            console.error('No response received:', error.request);
-            throw new Error('No response received from server');
+            throw new Error(`Failed to delete hijacking: ${error.response.data}`);
         } else {
-            console.error('Error setting up the request:', error.message);
-            throw new Error(`Error setting up the request: ${error.message}`);
+            throw new Error(`Failed to delete hijacking: ${error.message}`);
         }
     }
 };

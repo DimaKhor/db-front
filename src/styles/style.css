@@ -100,6 +100,7 @@
 .table-container h2 {
     margin-bottom: 20px;
     text-align: center;
+    font-family: 'IBM Plex mono', sans-serif;
 }
 
 .data-table {
@@ -224,6 +225,7 @@
     background-color: #c6cbd0;
     color: #000;
     transition: background-color 0.3s ease;
+    font-family: Raleway, sans-serif;
 }
 
 .actions button:hover {

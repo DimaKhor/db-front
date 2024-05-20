@@ -6,11 +6,11 @@ export const addTransportType = async (name: string) => {
     try {
         const response = await axios.post(`${API_URL}/transporttypes`, { name });
         return response.data;
-    } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-            throw new Error(error.response.data);
+    } catch (error: any) {
+        if (error.response) {
+            throw new Error(`Failed to create transport type: ${error.response.data}`);
         } else {
-            throw new Error('An unexpected error occurred while adding the color.');
+            throw new Error(`Failed to create transport type: ${error.message}`);
         }
     }
 };
@@ -33,9 +33,9 @@ export const updateTransportType = async (id: number, name: string) => {
         return response.data;
     } catch (error: any) {
         if (error.response) {
-            throw new Error(`Failed to delete person: ${error.response.data}`);
+            throw new Error(`Failed to update transport type: ${error.response.data}`);
         } else {
-            throw new Error(`Failed to delete person: ${error.message}`);
+            throw new Error(`Failed to update transport type: ${error.message}`);
         }
     }
 };

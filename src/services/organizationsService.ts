@@ -30,9 +30,9 @@ export const deleteOrganization = async (id: number) => {
         await axios.delete(`/organizations/${id}`);
     } catch (error: any) {
         if (error.response) {
-            throw new Error(`Failed to delete person: ${error.response.data}`);
+            throw new Error(`Failed to delete organization: ${error.response.data}`);
         } else {
-            throw new Error(`Failed to delete person: ${error.message}`);
+            throw new Error(`Failed to delete organization: ${error.message}`);
         }
     }
 };

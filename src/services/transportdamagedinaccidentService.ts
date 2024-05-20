@@ -6,9 +6,12 @@ export const addTransportDamaged = async (dto: any) => {
     try {
         const response = await axios.post(`${API_URL}/transports-damaged-in-accident`, dto);
         return response.data;
-    } catch (error:any) {
-        console.error('Failed to add transport damaged in accident:', error.message);
-        throw new Error('Ошибка при добавлении записи о поврежденном транспортном средстве.');
+    } catch (error: any) {
+        if (error.response) {
+            throw new Error(`Failed to create transport damaged in accident: ${error.response.data}`);
+        } else {
+            throw new Error(`Failed to create transport damaged in accident: ${error.message}`);
+        }
     }
 };
 
@@ -16,18 +19,24 @@ export const updateTransportDamaged = async (accidentId: number, transportId: nu
     try {
         const response = await axios.put(`${API_URL}/transports-damaged-in-accident/${accidentId}/${transportId}`, dto);
         return response.data;
-    } catch (error:any) {
-        console.error('Failed to update transport damaged in accident:', error.message);
-        throw new Error('Ошибка при обновлении записи о поврежденном транспортном средстве.');
+    } catch (error: any) {
+        if (error.response) {
+            throw new Error(`Failed to update transport damaged in accident: ${error.response.data}`);
+        } else {
+            throw new Error(`Failed to update transport damaged in accident: ${error.message}`);
+        }
     }
 };
 
 export const deleteTransportDamaged = async (accidentId: number, transportId: number) => {
     try {
         await axios.delete(`${API_URL}/transports-damaged-in-accident/${accidentId}/${transportId}`);
-    } catch (error:any) {
-        console.error('Failed to delete transport damaged in accident:', error.message);
-        throw new Error('Ошибка при удалении записи о поврежденном транспортном средстве.');
+    } catch (error: any) {
+        if (error.response) {
+            throw new Error(`Failed to delete transport damaged in accident: ${error.response.data}`);
+        } else {
+            throw new Error(`Failed to delete transport damaged in accident: ${error.message}`);
+        }
     }
 };
 
