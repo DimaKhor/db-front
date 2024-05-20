@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { getPersonByTransportNumber } from '../../services/queryService';
+import { getTransportNumberDirectory } from '../../services/tableService';
 
 interface Person {
     id: number;
@@ -13,10 +14,24 @@ interface Person {
 }
 
 const Query2: React.FC = () => {
-    const [number, setNumber] = useState<string>('');
+    const [selectedNumberId, setSelectedNumberId] = useState<string>('');
     const [error, setError] = useState<string | null>(null);
     const [result, setResult] = useState<Person | null>(null);
     const [searched, setSearched] = useState<boolean>(false);
+    const [numbers, setNumbers] = useState<any[]>([]);
+
+    useEffect(() => {
+        const fetchTransportNumbers = async () => {
+            try {
+                const data = await getTransportNumberDirectory();
+                setNumbers(data);
+            } catch (err: any) {
+                console.error('Failed to fetch transport numbers:', err.message);
+            }
+        };
+
+        fetchTransportNumbers();
+    }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -26,7 +41,7 @@ const Query2: React.FC = () => {
         setSearched(true);
 
         try {
-            const data = await getPersonByTransportNumber(number);
+            const data = await getPersonByTransportNumber(selectedNumberId);
             setResult(data);
         } catch (err: any) {
             setError(`Ошибка при получении данных: ${err.message}`);
@@ -40,15 +55,23 @@ const Query2: React.FC = () => {
                 <div className="form-group">
                     <label>
                         Государственный номер:
-                        <input type="text" value={number} onChange={(e) => setNumber(e.target.value)} />
+                        <select
+                            className="styled-select"
+                            value={selectedNumberId}
+                            onChange={(e) => setSelectedNumberId(e.target.value)}
+                        >
+                            <option value="">Выберите транспорт</option>
+                            {numbers.map((number) => (
+                                <option key={number.id} value={number.number}>{number.number}</option>
+                            ))}
+                        </select>
                     </label>
                 </div>
                 <button type="submit">Найти</button>
             </form>
             {error && <div className="error-message">{error}</div>}
-            <div className="results">
-                {searched && !result && !error && <div>Нет данных для отображения</div>}
-                {result && (
+            {result && (
+                <div className="results">
                     <table className="result-table">
                         <thead>
                         <tr>
@@ -75,8 +98,8 @@ const Query2: React.FC = () => {
                         </tr>
                         </tbody>
                     </table>
-                )}
-            </div>
+                </div>
+            )}
         </div>
     );
 };

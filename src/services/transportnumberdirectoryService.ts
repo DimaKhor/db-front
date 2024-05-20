@@ -14,9 +14,9 @@ export const createTransportNumber = async (data: any) => {
     try {
         const response = await axios.post('/transport-number', data);
         return response.data;
-    } catch (error:any) {
-        console.error(error);
-        throw new Error('Failed to create transport number: ' + error.message);
+    } catch (error: any) {
+        console.error('Failed to create transport number', error);
+        throw new Error(`Failed to create transport number: ${error.response?.data?.message || error.message}`);
     }
 };
 
@@ -24,21 +24,17 @@ export const updateTransportNumber = async (id: number, data: any) => {
     try {
         const response = await axios.put(`/transport-number/${id}`, data);
         return response.data;
-    } catch (error:any) {
-        console.error(error);
-        throw new Error('Failed to update transport number: ' + error.message);
+    } catch (error: any) {
+        console.error('Failed to update transport number', error);
+        throw new Error(`Failed to update transport number: ${error.response?.data?.message || error.message}`);
     }
 };
 
 export const deleteTransportNumber = async (id: number) => {
     try {
         await axios.delete(`/transport-number/${id}`);
-    } catch (error:any) {
-        console.error(error);
-        if (error.response && error.response.data) {
-            throw new Error('Failed to delete transport number: ' + error.response.data);
-        } else {
-            throw new Error('Failed to delete transport number: ' + error.message);
-        }
+    } catch (error: any) {
+        console.error('Failed to delete transport number', error);
+        throw new Error(`Failed to delete transport number: ${error.response?.data?.message || error.message}`);
     }
 };

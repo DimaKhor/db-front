@@ -32,7 +32,7 @@ const Colors: React.FC = () => {
 
     const handleSave = async () => {
         try {
-            setError(null); // Reset error before attempting the operation
+            setError(null);
             if (action === 'create' && inputValue) {
                 await addColor(inputValue);
             } else if (action === 'delete' && inputId) {
@@ -40,7 +40,7 @@ const Colors: React.FC = () => {
             } else if (action === 'update' && inputId && inputValue) {
                 await updateColor(Number(inputId), inputValue);
             } else {
-                setError('Please provide valid input.');
+                setError('Заполните поле.');
                 return;
             }
 
@@ -90,6 +90,7 @@ const Colors: React.FC = () => {
                                 placeholder="Название"
                                 value={inputValue}
                                 onChange={(e) => setInputValue(e.target.value)}
+                                required
                             />
                         </div>
                     )}

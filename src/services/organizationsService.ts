@@ -6,15 +6,33 @@ export const getOrganizationById = async (id: number) => {
 };
 
 export const addOrganization = async (organization: any) => {
-    const response = await axios.post('/organizations', organization);
-    return response.data;
+    try {
+        const response = await axios.post('/organizations', organization);
+        return response.data;
+    } catch (error: any) {
+        console.error('Failed to add organization', error);
+        throw new Error(`Failed to add organization: ${error.response?.data?.message || error.message}`);
+    }
 };
 
 export const updateOrganization = async (id: number, organization: any) => {
-    const response = await axios.put(`/organizations/${id}`, organization);
-    return response.data;
+    try {
+        const response = await axios.put(`/organizations/${id}`, organization);
+        return response.data;
+    } catch (error: any) {
+        console.error('Failed to update organization', error);
+        throw new Error(`Failed to update organization: ${error.response?.data?.message || error.message}`);
+    }
 };
 
 export const deleteOrganization = async (id: number) => {
-    await axios.delete(`/organizations/${id}`);
+    try {
+        await axios.delete(`/organizations/${id}`);
+    } catch (error: any) {
+        if (error.response) {
+            throw new Error(`Failed to delete person: ${error.response.data}`);
+        } else {
+            throw new Error(`Failed to delete person: ${error.message}`);
+        }
+    }
 };

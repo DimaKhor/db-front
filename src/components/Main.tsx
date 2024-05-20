@@ -22,6 +22,7 @@ import Query8 from "./queries/query8";
 import Query9 from "./queries/query9";
 import Query10 from "./queries/query10";
 import Query11 from "./queries/query11";
+import Hello from "./Hello";
 
 interface MainProps {
     activeBlock: string;
@@ -30,7 +31,7 @@ interface MainProps {
 const Main: React.FC<MainProps> = ({ activeBlock }) => {
     return (
         <main className="main">
-            {activeBlock === 'block1' && <div>Content for Block 1</div>}
+            {activeBlock === 'block1' && <div><Hello /></div>}
             {activeBlock === 'Colors' && <div><Colors /></div>}
             {activeBlock === 'TransportTypes' && <div><TransportTypes /></div>}
             {activeBlock === 'Brands' && <div><Brands /></div>}

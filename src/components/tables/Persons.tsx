@@ -36,11 +36,21 @@ const Persons: React.FC = () => {
         fetchPersons();
     }, []);
 
+    const validateFormData = () => {
+        if (!formData.lastname || !formData.name || !formData.city) {
+            setError('Фамилия, Имя и Город обязательны для заполнения.');
+            return false;
+        }
+        return true;
+    };
+
     const handleSave = async () => {
         try {
             if (formType === 'create') {
+                if (!validateFormData()) return;
                 await addPerson(formData);
             } else if (formType === 'update' && selectedId !== null) {
+                if (!validateFormData()) return;
                 await updatePerson(selectedId, formData);
             } else if (formType === 'delete' && selectedId !== null) {
                 await deletePerson(selectedId);
@@ -115,43 +125,46 @@ const Persons: React.FC = () => {
                             <h3>Создать запись</h3>
                             <input
                                 type="text"
-                                placeholder="Last Name"
+                                placeholder="Фамилия"
                                 value={formData.lastname || ''}
                                 onChange={(e) => setFormData({ ...formData, lastname: e.target.value })}
+                                required
                             />
                             <input
                                 type="text"
-                                placeholder="Name"
+                                placeholder="Имя"
                                 value={formData.name || ''}
                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                required
                             />
                             <input
                                 type="text"
-                                placeholder="Father Name"
+                                placeholder="Отчество"
                                 value={formData.fathername || ''}
                                 onChange={(e) => setFormData({ ...formData, fathername: e.target.value })}
                             />
                             <input
                                 type="text"
-                                placeholder="City"
+                                placeholder="Город"
                                 value={formData.city || ''}
                                 onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                                required
                             />
                             <input
                                 type="text"
-                                placeholder="Street"
+                                placeholder="Улица"
                                 value={formData.street || ''}
                                 onChange={(e) => setFormData({ ...formData, street: e.target.value })}
                             />
                             <input
                                 type="text"
-                                placeholder="House"
+                                placeholder="Дом"
                                 value={formData.house || ''}
                                 onChange={(e) => setFormData({ ...formData, house: e.target.value })}
                             />
                             <input
                                 type="number"
-                                placeholder="Apartment"
+                                placeholder="Квартира"
                                 value={formData.apartment || ''}
                                 onChange={(e) => setFormData({ ...formData, apartment: e.target.value })}
                             />
@@ -193,43 +206,46 @@ const Persons: React.FC = () => {
                                 <div>
                                     <input
                                         type="text"
-                                        placeholder="Last Name"
+                                        placeholder="Фамилия"
                                         value={formData.lastname || ''}
                                         onChange={(e) => setFormData({ ...formData, lastname: e.target.value })}
+                                        required
                                     />
                                     <input
                                         type="text"
-                                        placeholder="Name"
+                                        placeholder="Имя"
                                         value={formData.name || ''}
                                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                        required
                                     />
                                     <input
                                         type="text"
-                                        placeholder="Father Name"
+                                        placeholder="Отчество"
                                         value={formData.fathername || ''}
                                         onChange={(e) => setFormData({ ...formData, fathername: e.target.value })}
                                     />
                                     <input
                                         type="text"
-                                        placeholder="City"
+                                        placeholder="Город"
                                         value={formData.city || ''}
                                         onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                                        required
                                     />
                                     <input
                                         type="text"
-                                        placeholder="Street"
+                                        placeholder="Улица"
                                         value={formData.street || ''}
                                         onChange={(e) => setFormData({ ...formData, street: e.target.value })}
                                     />
                                     <input
                                         type="text"
-                                        placeholder="House"
+                                        placeholder="Дом"
                                         value={formData.house || ''}
                                         onChange={(e) => setFormData({ ...formData, house: e.target.value })}
                                     />
                                     <input
                                         type="number"
-                                        placeholder="Apartment"
+                                        placeholder="Квартира"
                                         value={formData.apartment || ''}
                                         onChange={(e) => setFormData({ ...formData, apartment: e.target.value })}
                                     />

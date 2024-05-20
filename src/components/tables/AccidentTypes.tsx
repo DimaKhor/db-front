@@ -40,7 +40,7 @@ const AccidentTypes: React.FC = () => {
             } else if (action === 'update' && inputId && inputValue) {
                 await updateAccidentType(Number(inputId), inputValue);
             } else {
-                setError('Please provide valid input.');
+                setError('Заполните поле.');
                 return;
             }
 

@@ -39,8 +39,18 @@ const Organizations: React.FC = () => {
     const handleSave = async () => {
         try {
             if (formType === 'create') {
+                const isValid = validateFormData(formData);
+                if (!isValid) {
+                    setError('Заполните поля name, area, headname, headlastname.');
+                    return;
+                }
                 await addOrganization(formData);
             } else if (formType === 'update' && selectedId !== null) {
+                const isValid = validateFormData(formData);
+                if (!isValid) {
+                    setError('Заполните поля name, area, headname, headlastname.');
+                    return;
+                }
                 await updateOrganization(selectedId, formData);
             } else if (formType === 'delete' && selectedId !== null) {
                 await deleteOrganization(selectedId);
@@ -48,11 +58,18 @@ const Organizations: React.FC = () => {
             setFormType(null);
             setFormData({});
             setSelectedId(null);
-            await fetchOrganizations(); // Обновление данных после операции
-            setError(null); // Убрать сообщение об ошибке
+            await fetchOrganizations();
+            setError(null);
         } catch (err: any) {
             setError(`Failed to ${formType}: ${err.message}`);
         }
+    };
+
+    const validateFormData = (data: Organization): boolean => {
+        if (!data.name || !data.area || !data.headLastName || !data.headName) {
+            return false;
+        }
+        return true;
     };
 
     const fetchOrganizationForUpdate = async (id: number) => {

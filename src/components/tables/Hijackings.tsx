@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { getHijackings } from '../../services/tableService';
+import {
+    getBrands, getColors,
+    getHijackings,
+    getHijackingsResult, getOrganizations, getPersons,
+    getTransportNumberDirectory,
+    getTransportTypes
+} from '../../services/tableService';
 import { getHijackingById, addHijacking, updateHijacking, deleteHijacking } from '../../services/hijackingsService';
 
 interface Hijacking {
@@ -17,6 +23,8 @@ const Hijackings: React.FC = () => {
     const [formType, setFormType] = useState<'create' | 'update' | 'delete' | null>(null);
     const [formData, setFormData] = useState<any>({});
     const [selectedId, setSelectedId] = useState<number | null>(null);
+    const [hijackingResult, setResult] = useState([]);
+    const [number, setNumber] = useState([]);
 
     const fetchHijackings = async () => {
         try {
@@ -29,15 +37,39 @@ const Hijackings: React.FC = () => {
         }
     };
 
+    const fetchRelatedData = async () => {
+        try {
+            const [hijackingResult, number] = await Promise.all([
+                getHijackingsResult(),
+                getTransportNumberDirectory()
+            ]);
+            setResult(hijackingResult);
+            setNumber(number);
+        } catch (err: any) {
+            setError(`Failed to fetch related data: ${err.message}`);
+        }
+    };
+
     useEffect(() => {
         fetchHijackings();
+        fetchRelatedData()
     }, []);
+
+    const validateFormData = (): boolean => {
+        if (!formData.transportId || !formData.date || !formData.resultId || !formData.signaling) {
+            setError('Все поля обязательны для заполнения.');
+            return false;
+        }
+        return true;
+    };
 
     const handleSave = async () => {
         try {
             if (formType === 'create') {
+                if (!validateFormData()) return;
                 await addHijacking(formData);
             } else if (formType === 'update' && selectedId !== null) {
+                if (!validateFormData()) return;
                 await updateHijacking(selectedId, formData);
             } else if (formType === 'delete' && selectedId !== null) {
                 await deleteHijacking(selectedId);
@@ -45,8 +77,8 @@ const Hijackings: React.FC = () => {
             setFormType(null);
             setFormData({});
             setSelectedId(null);
-            await fetchHijackings(); // Обновление данных после операции
-            setError(null); // Убрать сообщение об ошибке
+            await fetchHijackings();
+            setError(null);
         } catch (err: any) {
             setError(`Failed to ${formType}: ${err.message}`);
         }
@@ -55,9 +87,8 @@ const Hijackings: React.FC = () => {
     const fetchHijackingForUpdate = async (id: number) => {
         try {
             const hijacking = await getHijackingById(id);
-            // Преобразование даты в формат YYYY-MM-DD без изменения часового пояса
             const date = new Date(hijacking.date);
-            date.setMinutes(date.getMinutes() - date.getTimezoneOffset()); // Применение часового пояса
+            date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
             hijacking.date = date.toISOString().split('T')[0];
             setFormData(hijacking);
         } catch (err: any) {
@@ -110,30 +141,40 @@ const Hijackings: React.FC = () => {
                     {formType === 'create' && (
                         <div>
                             <h3>Создать запись</h3>
-                            <input
-                                type="text"
-                                placeholder="Transport ID"
+                            <select
+                                className="styled-select"
                                 value={formData.transportId || ''}
-                                onChange={(e) => setFormData({ ...formData, transportId: e.target.value })}
-                            />
-                            <input
-                                type="text"
-                                placeholder="Result ID"
+                                onChange={(e) => setFormData({...formData, transportId: e.target.value})}
+                            >
+                                <option value="">Выберите транспорт</option>
+                                {number.map((number: any) => (
+                                    <option key={number.id}
+                                            value={number.id}>{[number.id, ', ', number.number]}</option>
+                                ))}
+                            </select>
+                            <select
+                                className="styled-select"
                                 value={formData.resultId || ''}
-                                onChange={(e) => setFormData({ ...formData, resultId: e.target.value })}
-                            />
+                                onChange={(e) => setFormData({...formData, resultId: e.target.value})}
+                            >
+                                <option value="">Выберите тип</option>
+                                {hijackingResult.map((hijackingResult: any) => (
+                                    <option key={hijackingResult.id}
+                                            value={hijackingResult.id}>{[hijackingResult.id, ', ', hijackingResult.resultName]}</option>
+                                ))}
+                            </select>
                             <input
                                 type="text"
                                 placeholder="Signaling"
                                 value={formData.signaling || ''}
-                                onChange={(e) => setFormData({ ...formData, signaling: e.target.value })}
+                                onChange={(e) => setFormData({...formData, signaling: e.target.value})}
                             />
                             <input
                                 type="date"
                                 max={today}
                                 placeholder="Date"
                                 value={formData.date || ''}
-                                onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                                onChange={(e) => setFormData({...formData, date: e.target.value})}
                             />
                         </div>
                     )}
@@ -171,23 +212,33 @@ const Hijackings: React.FC = () => {
                             </div>
                             {selectedId && (
                                 <div>
-                                    <input
-                                        type="text"
-                                        placeholder="Transport ID"
+                                    <select
+                                        className="styled-select"
                                         value={formData.transportId || ''}
-                                        onChange={(e) => setFormData({ ...formData, transportId: e.target.value })}
-                                    />
-                                    <input
-                                        type="text"
-                                        placeholder="Result ID"
+                                        onChange={(e) => setFormData({...formData, transportId: e.target.value})}
+                                    >
+                                        <option value="">Выберите транспорт</option>
+                                        {number.map((number: any) => (
+                                            <option key={number.id}
+                                                    value={number.id}>{[number.id, ', ', number.number]}</option>
+                                        ))}
+                                    </select>
+                                    <select
+                                        className="styled-select"
                                         value={formData.resultId || ''}
-                                        onChange={(e) => setFormData({ ...formData, resultId: e.target.value })}
-                                    />
+                                        onChange={(e) => setFormData({...formData, resultId: e.target.value})}
+                                    >
+                                        <option value="">Выберите тип</option>
+                                        {hijackingResult.map((hijackingResult: any) => (
+                                            <option key={hijackingResult.id}
+                                                    value={hijackingResult.id}>{[hijackingResult.id, ', ', hijackingResult.resultName]}</option>
+                                        ))}
+                                    </select>
                                     <input
                                         type="text"
                                         placeholder="Signaling"
                                         value={formData.signaling || ''}
-                                        onChange={(e) => setFormData({ ...formData, signaling: e.target.value })}
+                                        onChange={(e) => setFormData({...formData, signaling: e.target.value})}
                                     />
                                     <input
                                         type="date"

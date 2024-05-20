@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getInspection } from '../../services/tableService';
+import { getInspection, getTransportNumberDirectory } from '../../services/tableService';
 import { getInspectionById, addInspection, updateInspection, deleteInspection } from '../../services/inspectionService';
 
 interface Inspection {
@@ -12,6 +12,7 @@ interface Inspection {
 
 const Inspection: React.FC = () => {
     const [inspections, setInspections] = useState<Inspection[]>([]);
+    const [transportNumbers, setTransportNumbers] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [formType, setFormType] = useState<'create' | 'update' | 'delete' | null>(null);
@@ -29,15 +30,35 @@ const Inspection: React.FC = () => {
         }
     };
 
+    const fetchTransportNumbers = async () => {
+        try {
+            const data = await getTransportNumberDirectory();
+            setTransportNumbers(data);
+        } catch (err: any) {
+            setError(`Failed to fetch transport numbers: ${err.message}`);
+        }
+    };
+
     useEffect(() => {
         fetchInspections();
+        fetchTransportNumbers();
     }, []);
+
+    const validateFormData = () => {
+        if (!formData.transportId || !formData.paymentForLiter || !formData.periodicityInMonths || !formData.lastTime) {
+            setError('Все поля обязательны для заполнения.');
+            return false;
+        }
+        return true;
+    };
 
     const handleSave = async () => {
         try {
             if (formType === 'create') {
+                if (!validateFormData()) return;
                 await addInspection(formData);
             } else if (formType === 'update' && selectedId !== null) {
+                if (!validateFormData()) return;
                 await updateInspection(selectedId, formData);
             } else if (formType === 'delete' && selectedId !== null) {
                 await deleteInspection(selectedId);
@@ -56,8 +77,8 @@ const Inspection: React.FC = () => {
         try {
             const inspection = await getInspectionById(id);
             const date = new Date(inspection.lastTime);
-            date.setMinutes(date.getMinutes() - date.getTimezoneOffset()); // Применение часового пояса
-            inspection.lastTime = date.toISOString().split('T')[0]; // Преобразование даты
+            date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+            inspection.lastTime = date.toISOString().split('T')[0];
             setFormData(inspection);
         } catch (err: any) {
             setError(`Failed to fetch inspection: ${err.message}`);
@@ -69,6 +90,11 @@ const Inspection: React.FC = () => {
             fetchInspectionForUpdate(selectedId);
         }
     }, [selectedId]);
+
+    const getAvailableTransportIds = () => {
+        const usedTransportIds = inspections.map((inspection) => inspection.transportId);
+        return transportNumbers.filter((number) => !usedTransportIds.includes(number.id));
+    };
 
     const today = new Date().toISOString().split('T')[0];
 
@@ -109,16 +135,23 @@ const Inspection: React.FC = () => {
                     {formType === 'create' && (
                         <div>
                             <h3>Создать запись</h3>
-                            <input
-                                type="text"
-                                placeholder="Transport ID"
+                            <select
+                                className="styled-select"
                                 value={formData.transportId || ''}
                                 onChange={(e) => setFormData({ ...formData, transportId: e.target.value })}
-                            />
+                            >
+                                <option value="">Выберите транспорт</option>
+                                {getAvailableTransportIds().map((number) => (
+                                    <option key={number.id} value={number.id}>
+                                        {number.id}, {number.number}
+                                    </option>
+                                ))}
+                            </select>
                             <input
                                 type="number"
                                 placeholder="Payment For Liter"
                                 value={formData.paymentForLiter || ''}
+                                min="1"
                                 onChange={(e) => setFormData({ ...formData, paymentForLiter: e.target.value })}
                             />
                             <input
@@ -170,12 +203,18 @@ const Inspection: React.FC = () => {
                             </div>
                             {selectedId && (
                                 <div>
-                                    <input
-                                        type="text"
-                                        placeholder="Transport ID"
+                                    <select
+                                        className="styled-select"
                                         value={formData.transportId || ''}
                                         onChange={(e) => setFormData({ ...formData, transportId: e.target.value })}
-                                    />
+                                    >
+                                        <option value="">Выберите транспорт</option>
+                                        {transportNumbers.map((number) => (
+                                            <option key={number.id} value={number.id}>
+                                                {number.id}, {number.number}
+                                            </option>
+                                        ))}
+                                    </select>
                                     <input
                                         type="number"
                                         placeholder="Payment For Liter"

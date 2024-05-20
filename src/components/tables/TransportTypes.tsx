@@ -32,7 +32,7 @@ const TransportTypes: React.FC = () => {
 
     const handleSave = async () => {
         try {
-            setError(null); // Reset error before attempting the operation
+            setError(null);
             if (action === 'create' && inputValue) {
                 await addTransportType(inputValue);
             } else if (action === 'delete' && inputId) {
@@ -40,7 +40,7 @@ const TransportTypes: React.FC = () => {
             } else if (action === 'update' && inputId && inputValue) {
                 await updateTransportType(Number(inputId), inputValue);
             } else {
-                setError('Please provide valid input.');
+                setError('Заполните поле.');
                 return;
             }
 

@@ -16,9 +16,12 @@ export const addPerson = async (person: any) => {
     try {
         const response = await axios.post(`${API_URL}/persons`, person);
         return response.data;
-    } catch (error:any) {
-        console.error(error);
-        throw new Error('Failed to add person: ' + error.message);
+    } catch (error: any) {
+        if (error.response) {
+            throw new Error(`Failed to add person: ${error.response.data}`);
+        } else {
+            throw new Error(`Failed to add person: ${error.message}`);
+        }
     }
 };
 
@@ -26,21 +29,23 @@ export const updatePerson = async (id: number, person: any) => {
     try {
         const response = await axios.put(`${API_URL}/persons/${id}`, person);
         return response.data;
-    } catch (error:any) {
-        console.error(error);
-        throw new Error('Failed to update person: ' + error.message);
+    } catch (error: any) {
+        if (error.response) {
+            throw new Error(`Failed to update person: ${error.response.data}`);
+        } else {
+            throw new Error(`Failed to update person: ${error.message}`);
+        }
     }
 };
 
 export const deletePerson = async (id: number) => {
     try {
         await axios.delete(`${API_URL}/persons/${id}`);
-    } catch (error:any) {
-        console.error(error);
-        if (error.response && error.response.data) {
-            throw new Error('Failed to delete person: ' + error.response.data);
+    } catch (error: any) {
+        if (error.response) {
+            throw new Error(`Failed to delete person: ${error.response.data}`);
         } else {
-            throw new Error('Failed to delete person: ' + error.message);
+            throw new Error(`Failed to delete person: ${error.message}`);
         }
     }
 };

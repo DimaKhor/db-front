@@ -1,11 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { getCarProfileByTransportNumber } from '../../services/queryService';
+import { getTransportNumberDirectory } from '../../services/tableService';
 
 const Query3: React.FC = () => {
-    const [number, setNumber] = useState<string>('');
+    const [selectedNumberId, setSelectedNumberId] = useState<string>('');
     const [error, setError] = useState<string | null>(null);
     const [result, setResult] = useState<any | null>(null);
     const [searched, setSearched] = useState<boolean>(false);
+    const [numbers, setNumbers] = useState<any[]>([]);
+
+    useEffect(() => {
+        const fetchTransportNumbers = async () => {
+            try {
+                const data = await getTransportNumberDirectory();
+                setNumbers(data);
+            } catch (err: any) {
+                console.error('Failed to fetch transport numbers:', err.message);
+            }
+        };
+
+        fetchTransportNumbers();
+    }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -15,11 +30,11 @@ const Query3: React.FC = () => {
         setSearched(true);
 
         try {
-            const data = await getCarProfileByTransportNumber(number);
+            const data = await getCarProfileByTransportNumber(selectedNumberId);
             if (!data || data.length === 0) {
                 setError('Нет данных для отображения');
             } else {
-                setResult(data[0]); // Берем первый элемент массива данных
+                setResult(data[0]);
             }
         } catch (err: any) {
             setError(`Ошибка при получении данных: ${err.message}`);
@@ -33,11 +48,16 @@ const Query3: React.FC = () => {
                 <div className="form-group">
                     <label>
                         Государственный номер:
-                        <input
-                            type="text"
-                            value={number}
-                            onChange={(e) => setNumber(e.target.value)}
-                        />
+                        <select
+                            className="styled-select"
+                            value={selectedNumberId}
+                            onChange={(e) => setSelectedNumberId(e.target.value)}
+                        >
+                            <option value="">Выберите транспорт</option>
+                            {numbers.map((number) => (
+                                <option key={number.id} value={number.number}>{number.number}</option>
+                            ))}
+                        </select>
                     </label>
                 </div>
                 <button type="submit">Найти</button>
@@ -46,7 +66,7 @@ const Query3: React.FC = () => {
             {result && (
                 <div className="results">
                     <table className="result-table">
-                        <thead>
+                    <thead>
                         <tr>
                             <th>Номер двигателя</th>
                             <th>Номер кузова</th>

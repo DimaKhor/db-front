@@ -32,7 +32,7 @@ const HijackingsResult: React.FC = () => {
 
     const handleSave = async () => {
         try {
-            setError(null); // Reset error before attempting the operation
+            setError(null);
             if (action === 'create' && inputValue) {
                 await addHijackingsResult(inputValue);
             } else if (action === 'delete' && inputId) {
@@ -40,7 +40,7 @@ const HijackingsResult: React.FC = () => {
             } else if (action === 'update' && inputId && inputValue) {
                 await updateHijackingsResult(Number(inputId), inputValue);
             } else {
-                setError('Please provide valid input.');
+                setError('Заполните поле.');
                 return;
             }
 

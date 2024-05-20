@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { getAccidentStatisticsByTypeAndPeriod } from '../../services/queryService';
+import { getAccidentTypes } from "../../services/tableService";
 
 interface AccidentStatistics {
     name: string;
@@ -12,7 +13,21 @@ const Query5: React.FC = () => {
     const [endDate, setEndDate] = useState<string>('');
     const [error, setError] = useState<string | null>(null);
     const [result, setResult] = useState<AccidentStatistics[]>([]);
-    const [searched, setSearched] = useState<boolean>(false); // Добавлено состояние для проверки выполнения запроса
+    const [searched, setSearched] = useState<boolean>(false);
+    const [accidentTypes, setAccidentTypes] = useState<any[]>([]);
+
+    useEffect(() => {
+        const fetchAccidentTypes = async () => {
+            try {
+                const data = await getAccidentTypes();
+                setAccidentTypes(data);
+            } catch (err: any) {
+                console.error('Failed to fetch accident types:', err.message);
+            }
+        };
+
+        fetchAccidentTypes();
+    }, []);
 
     const isValidDate = (date: string) => {
         const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
@@ -21,6 +36,8 @@ const Query5: React.FC = () => {
         const dateObj = new Date(year, month - 1, day);
         return dateObj.getFullYear() === year && dateObj.getMonth() === month - 1 && dateObj.getDate() === day;
     };
+
+    const today = new Date().toISOString().split('T')[0];
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -38,7 +55,7 @@ const Query5: React.FC = () => {
         }
 
         setError(null);
-        setSearched(true); // Установка флага поиска
+        setSearched(true);
 
         try {
             const data = await getAccidentStatisticsByTypeAndPeriod(type, startDate, endDate);
@@ -56,19 +73,37 @@ const Query5: React.FC = () => {
                 <div className="form-group">
                     <label>
                         Тип ДТП:
-                        <input type="text" value={type} onChange={(e) => setType(e.target.value)} />
+                        <select
+                            className="styled-select"
+                            value={type}
+                            onChange={(e) => setType(e.target.value)}
+                        >
+                            <option value="">Выберите тип ДТП</option>
+                            {accidentTypes.map((accidentType) => (
+                                <option key={accidentType.id} value={accidentType.name}>{accidentType.name}</option>
+                            ))}
+                        </select>
                     </label>
                 </div>
                 <div className="form-group">
                     <label>
-                        Начальная дата (yyyy-MM-dd):
-                        <input type="text" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+                        Начальная дата:
+                        <input
+                            type="date"
+                            value={startDate}
+                            max={today}
+                            onChange={(e) => setStartDate(e.target.value)} />
                     </label>
                 </div>
                 <div className="form-group">
                     <label>
-                        Конечная дата (yyyy-MM-dd):
-                        <input type="text" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+                        Конечная дата:
+                        <input
+                            type="date"
+                            value={endDate}
+                            min={startDate}
+                            max={today}
+                            onChange={(e) => setEndDate(e.target.value)} />
                     </label>
                 </div>
                 <button type="submit">Найти</button>

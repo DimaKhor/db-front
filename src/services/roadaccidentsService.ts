@@ -33,7 +33,11 @@ export const deleteRoadAccident = async (id: number): Promise<void> => {
     try {
         await axios.delete(`${API_URL}/roadaccidents/${id}`);
     } catch (error: any) {
-        handleRequestError(error);
+        if (error.response) {
+            throw new Error(`Failed to delete road accident: ${error.response.data}`);
+        } else {
+            throw new Error(`Failed to delete road accidente: ${error.message}`);
+        }
     }
 };
 

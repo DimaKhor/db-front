@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getTransportNumberDirectory } from '../../services/tableService';
+import { getTransportNumberDirectory, getTransportTypes, getPersons, getOrganizations, getBrands, getColors } from '../../services/tableService';
 import { getTransportNumberById, createTransportNumber, updateTransportNumber, deleteTransportNumber } from '../../services/transportnumberdirectoryService';
 
 interface TransportNumber {
@@ -19,6 +19,11 @@ interface TransportNumber {
 
 const TransportNumberDirectory: React.FC = () => {
     const [transportNumbers, setTransportNumbers] = useState<TransportNumber[]>([]);
+    const [transportTypes, setTransportTypes] = useState([]);
+    const [persons, setPersons] = useState([]);
+    const [organizations, setOrganizations] = useState([]);
+    const [brands, setBrands] = useState([]);
+    const [colors, setColors] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [formType, setFormType] = useState<'create' | 'update' | 'delete' | null>(null);
@@ -36,17 +41,53 @@ const TransportNumberDirectory: React.FC = () => {
         }
     };
 
+    const fetchRelatedData = async () => {
+        try {
+            const [transportTypes, persons, organizations, brands, colors] = await Promise.all([
+                getTransportTypes(),
+                getPersons(),
+                getOrganizations(),
+                getBrands(),
+                getColors(),
+            ]);
+            setTransportTypes(transportTypes);
+            setPersons(persons);
+            setOrganizations(organizations);
+            setBrands(brands);
+            setColors(colors);
+        } catch (err: any) {
+            setError(`Failed to fetch related data: ${err.message}`);
+        }
+    };
+
     useEffect(() => {
         fetchTransportNumbers();
+        fetchRelatedData();
     }, []);
 
     const today = new Date().toISOString().split('T')[0];
 
+    const validateFormData = () => {
+        if (!formData.transportTypeId || !formData.personId || !formData.brandId || !formData.colorId || !formData.issueDate || !formData.engineCapacity || !formData.engineId || !formData.chassisId || !formData.coachbuilderId || !formData.number) {
+            setError('Все поля, кроме организации, обязательны для заполнения.');
+            return false;
+        }
+        return true;
+    };
+
+
     const handleSave = async () => {
+        if (formData.engineCapacity <= 0) {
+            setError("Engine capacity must be greater than zero.");
+            return;
+        }
+
         try {
             if (formType === 'create') {
+                if (!validateFormData()) return;
                 await createTransportNumber(formData);
             } else if (formType === 'update' && selectedId !== null) {
+                if (!validateFormData()) return;
                 await updateTransportNumber(selectedId, formData);
             } else if (formType === 'delete' && selectedId !== null) {
                 await deleteTransportNumber(selectedId);
@@ -54,8 +95,8 @@ const TransportNumberDirectory: React.FC = () => {
             setFormType(null);
             setFormData({});
             setSelectedId(null);
-            await fetchTransportNumbers(); // Обновление данных после операции
-            setError(null); // Убрать сообщение об ошибке
+            await fetchTransportNumbers();
+            setError(null);
         } catch (err: any) {
             let errorMessage = '';
             if (err.response && err.response.data && err.response.data.error) {
@@ -86,7 +127,7 @@ const TransportNumberDirectory: React.FC = () => {
             const transportNumber = await getTransportNumberById(id);
             setFormData({
                 ...transportNumber,
-                issueDate: new Date(transportNumber.issueDate).toISOString().split('T')[0] // Format the date for input[type=date]
+                issueDate: new Date(transportNumber.issueDate).toISOString().split('T')[0]
             });
         } catch (err: any) {
             setError(`Failed to fetch transport number: ${err.message}`);
@@ -150,72 +191,94 @@ const TransportNumberDirectory: React.FC = () => {
                     {formType === 'create' && (
                         <div>
                             <h3>Добавить запись</h3>
-                            <input
-                                type="text"
-                                placeholder="Транспортный тип"
+                            <select
+                                className="styled-select"
                                 value={formData.transportTypeId || ''}
-                                onChange={(e) => setFormData({ ...formData, transportTypeId: e.target.value })}
-                            />
-                            <input
-                                type="text"
-                                placeholder="ID человека"
+                                onChange={(e) => setFormData({...formData, transportTypeId: e.target.value})}
+                            >
+                                <option value="">Выберите тип транспорта</option>
+                                {transportTypes.map((type: any) => (
+                                    <option key={type.id} value={type.id}>{[type.id, ', ', type.name]}</option>
+                                ))}
+                            </select>
+                            <select
+                                className="styled-select"
                                 value={formData.personId || ''}
-                                onChange={(e) => setFormData({ ...formData, personId: e.target.value })}
-                            />
-                            <input
-                                type="text"
-                                placeholder="ID организации"
+                                onChange={(e) => setFormData({...formData, personId: e.target.value})}
+                            >
+                                <option value="">Выберите человека</option>
+                                {persons.map((person: any) => (
+                                    <option key={person.id}
+                                            value={person.id}>{[person.id, ', ', person.name, ' ', person.lastname, ' ', person.fathername]}</option>
+                                ))}
+                            </select>
+                            <select
+                                className="styled-select"
                                 value={formData.organizationId || ''}
-                                onChange={(e) => setFormData({ ...formData, organizationId: e.target.value })}
-                            />
-                            <input
-                                type="text"
-                                placeholder="ID марки"
+                                onChange={(e) => setFormData({...formData, organizationId: e.target.value})}
+                            >
+                                <option value="">Выберите организацию</option>
+                                {organizations.map((org: any) => (
+                                    <option key={org.id} value={org.id}>{[org.id, ', ', org.name]}</option>
+                                ))}
+                            </select>
+                            <select
+                                className="styled-select"
                                 value={formData.brandId || ''}
-                                onChange={(e) => setFormData({ ...formData, brandId: e.target.value })}
-                            />
-                            <input
-                                type="text"
-                                placeholder="ID цвета"
+                                onChange={(e) => setFormData({...formData, brandId: e.target.value})}
+                            >
+                                <option value="">Выберите марку</option>
+                                {brands.map((brand: any) => (
+                                    <option key={brand.id} value={brand.id}>{[brand.id, ', ', brand.name]}</option>
+                                ))}
+                            </select>
+                            <select
+                                className="styled-select"
                                 value={formData.colorId || ''}
-                                onChange={(e) => setFormData({ ...formData, colorId: e.target.value })}
-                            />
+                                onChange={(e) => setFormData({...formData, colorId: e.target.value})}
+                            >
+                                <option value="">Выберите цвет</option>
+                                {colors.map((color: any) => (
+                                    <option key={color.id} value={color.id}>{[color.id, ', ', color.name]}</option>
+                                ))}
+                            </select>
                             <input
                                 type="date"
                                 max={today}
                                 placeholder="Дата выпуска"
                                 value={formData.issueDate || ''}
-                                onChange={(e) => setFormData({ ...formData, issueDate: e.target.value })}
+                                onChange={(e) => setFormData({...formData, issueDate: e.target.value})}
                             />
                             <input
                                 type="number"
                                 placeholder="Объем двигателя"
                                 value={formData.engineCapacity || ''}
-                                onChange={(e) => setFormData({ ...formData, engineCapacity: e.target.value })}
+                                onChange={(e) => setFormData({...formData, engineCapacity: e.target.value})}
+                                min="1"
                             />
                             <input
                                 type="text"
                                 placeholder="ID двигателя"
                                 value={formData.engineId || ''}
-                                onChange={(e) => setFormData({ ...formData, engineId: e.target.value })}
+                                onChange={(e) => setFormData({...formData, engineId: e.target.value})}
                             />
                             <input
                                 type="text"
                                 placeholder="ID шасси"
                                 value={formData.chassisId || ''}
-                                onChange={(e) => setFormData({ ...formData, chassisId: e.target.value })}
+                                onChange={(e) => setFormData({...formData, chassisId: e.target.value})}
                             />
                             <input
                                 type="text"
                                 placeholder="ID кузова"
                                 value={formData.coachbuilderId || ''}
-                                onChange={(e) => setFormData({ ...formData, coachbuilderId: e.target.value })}
+                                onChange={(e) => setFormData({...formData, coachbuilderId: e.target.value})}
                             />
                             <input
                                 type="text"
                                 placeholder="Номер"
                                 value={formData.number || ''}
-                                onChange={(e) => setFormData({ ...formData, number: e.target.value })}
+                                onChange={(e) => setFormData({...formData, number: e.target.value})}
                             />
                         </div>
                     )}
@@ -230,7 +293,8 @@ const TransportNumberDirectory: React.FC = () => {
                                 >
                                     <option value="">Выберите ID</option>
                                     {transportNumbers.map(transportNumber => (
-                                        <option key={transportNumber.id} value={transportNumber.id}>{transportNumber.id}</option>
+                                        <option key={transportNumber.id}
+                                                value={transportNumber.id}>{transportNumber.id}</option>
                                     ))}
                                 </select>
                             </div>
@@ -247,78 +311,101 @@ const TransportNumberDirectory: React.FC = () => {
                                 >
                                     <option value="">Выберите ID</option>
                                     {transportNumbers.map(transportNumber => (
-                                        <option key={transportNumber.id} value={transportNumber.id}>{transportNumber.id}</option>
+                                        <option key={transportNumber.id}
+                                                value={transportNumber.id}>{transportNumber.id}</option>
                                     ))}
                                 </select>
                             </div>
                             {selectedId && (
                                 <div>
-                                    <input
-                                        type="text"
-                                        placeholder="Транспортный тип"
+                                    <select
+                                        className="styled-select"
                                         value={formData.transportTypeId || ''}
-                                        onChange={(e) => setFormData({ ...formData, transportTypeId: e.target.value })}
-                                    />
-                                    <input
-                                        type="text"
-                                        placeholder="ID человека"
+                                        onChange={(e) => setFormData({...formData, transportTypeId: e.target.value})}
+                                    >
+                                        <option value="">Выберите тип транспорта</option>
+                                        {transportTypes.map((type: any) => (
+                                            <option key={type.id} value={type.id}>{[type.id, ', ', type.name]}</option>
+                                        ))}
+                                    </select>
+                                    <select
+                                        className="styled-select"
                                         value={formData.personId || ''}
-                                        onChange={(e) => setFormData({ ...formData, personId: e.target.value })}
-                                    />
-                                    <input
-                                        type="text"
-                                        placeholder="ID организации"
+                                        onChange={(e) => setFormData({...formData, personId: e.target.value})}
+                                    >
+                                        <option value="">Выберите человека</option>
+                                        {persons.map((person: any) => (
+                                            <option key={person.id}
+                                                    value={person.id}>{[person.id, ', ', person.name, ' ', person.lastname, ' ', person.fathername]}</option>
+                                        ))}
+                                    </select>
+                                    <select
+                                        className="styled-select"
                                         value={formData.organizationId || ''}
-                                        onChange={(e) => setFormData({ ...formData, organizationId: e.target.value })}
-                                    />
-                                    <input
-                                        type="text"
-                                        placeholder="ID марки"
+                                        onChange={(e) => setFormData({...formData, organizationId: e.target.value})}
+                                    >
+                                        <option value="">Выберите организацию</option>
+                                        {organizations.map((org: any) => (
+                                            <option key={org.id} value={org.id}>{[org.id, ', ', org.name]}</option>
+                                        ))}
+                                    </select>
+                                    <select
+                                        className="styled-select"
                                         value={formData.brandId || ''}
-                                        onChange={(e) => setFormData({ ...formData, brandId: e.target.value })}
-                                    />
-                                    <input
-                                        type="text"
-                                        placeholder="ID цвета"
+                                        onChange={(e) => setFormData({...formData, brandId: e.target.value})}
+                                    >
+                                        <option value="">Выберите марку</option>
+                                        {brands.map((brand: any) => (
+                                            <option key={brand.id} value={brand.id}>{[brand.id, ', ', brand.name]}</option>
+                                        ))}
+                                    </select>
+                                    <select
+                                        className="styled-select"
                                         value={formData.colorId || ''}
-                                        onChange={(e) => setFormData({ ...formData, colorId: e.target.value })}
-                                    />
+                                        onChange={(e) => setFormData({...formData, colorId: e.target.value})}
+                                    >
+                                        <option value="">Выберите цвет</option>
+                                        {colors.map((color: any) => (
+                                            <option key={color.id} value={color.id}>{[color.id, ', ', color.name]}</option>
+                                        ))}
+                                    </select>
                                     <input
                                         type="date"
                                         max={today}
                                         placeholder="Дата выпуска"
                                         value={formData.issueDate || ''}
-                                        onChange={(e) => setFormData({ ...formData, issueDate: e.target.value })}
+                                        onChange={(e) => setFormData({...formData, issueDate: e.target.value})}
                                     />
                                     <input
                                         type="number"
                                         placeholder="Объем двигателя"
                                         value={formData.engineCapacity || ''}
-                                        onChange={(e) => setFormData({ ...formData, engineCapacity: e.target.value })}
+                                        onChange={(e) => setFormData({...formData, engineCapacity: e.target.value})}
+                                        min="1"
                                     />
                                     <input
                                         type="text"
                                         placeholder="ID двигателя"
                                         value={formData.engineId || ''}
-                                        onChange={(e) => setFormData({ ...formData, engineId: e.target.value })}
+                                        onChange={(e) => setFormData({...formData, engineId: e.target.value})}
                                     />
                                     <input
                                         type="text"
                                         placeholder="ID шасси"
                                         value={formData.chassisId || ''}
-                                        onChange={(e) => setFormData({ ...formData, chassisId: e.target.value })}
+                                        onChange={(e) => setFormData({...formData, chassisId: e.target.value})}
                                     />
                                     <input
                                         type="text"
                                         placeholder="ID кузова"
                                         value={formData.coachbuilderId || ''}
-                                        onChange={(e) => setFormData({ ...formData, coachbuilderId: e.target.value })}
+                                        onChange={(e) => setFormData({...formData, coachbuilderId: e.target.value})}
                                     />
                                     <input
                                         type="text"
                                         placeholder="Номер"
                                         value={formData.number || ''}
-                                        onChange={(e) => setFormData({ ...formData, number: e.target.value })}
+                                        onChange={(e) => setFormData({...formData, number: e.target.value})}
                                     />
                                 </div>
                             )}

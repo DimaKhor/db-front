@@ -21,6 +21,8 @@ const Query10: React.FC = () => {
         return dateObj.getFullYear() === year && dateObj.getMonth() === month - 1 && dateObj.getDate() === day;
     };
 
+    const today = new Date().toISOString().split('T')[0];
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setSubmitted(true);
@@ -60,14 +62,23 @@ const Query10: React.FC = () => {
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label>
-                        Начальная дата (yyyy-MM-dd):
-                        <input type="text" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+                        Начальная дата:
+                        <input
+                            type="date"
+                            max={today}
+                            value={startDate}
+                            onChange={(e) => setStartDate(e.target.value)} />
                     </label>
                 </div>
                 <div className="form-group">
                     <label>
-                        Конечная дата (yyyy-MM-dd):
-                        <input type="text" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+                        Конечная дата:
+                        <input
+                            type="date"
+                            min={startDate}
+                            max={today}
+                            value={endDate}
+                            onChange={(e) => setEndDate(e.target.value)} />
                     </label>
                 </div>
                 <button type="submit">Найти</button>

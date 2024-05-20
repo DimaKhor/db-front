@@ -13,7 +13,7 @@ export const getOrganizationsBySeriesOrPeriod = async (series?: string, startDat
         if (series) url += `series=${series}&`;
         if (startDate) url += `startDate=${startDate}&`;
         if (endDate) url += `endDate=${endDate}&`;
-        url = url.slice(0, -1); // Remove the trailing '&' or '?'
+        url = url.slice(0, -1);
         const response = await axios.get(url);
         return response.data;
     } catch (error) {
@@ -27,7 +27,7 @@ export const getOrganizationsCountBySeriesOrPeriod = async (series?: string, sta
         if (series) url += `series=${series}&`;
         if (startDate) url += `startDate=${startDate}&`;
         if (endDate) url += `endDate=${endDate}&`;
-        url = url.slice(0, -1); // Remove the trailing '&' or '?'
+        url = url.slice(0, -1);
         const response = await axios.get(url);
         return response.data;
     } catch (error) {
